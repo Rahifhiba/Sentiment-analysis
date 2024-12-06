@@ -15,24 +15,23 @@
                 <form method="POST" action="/analyze">
                     <h1> Sentiment Analysis of tweets </h1>
                     <label for="topic"></label>
-                    <input id="topic" name="topic" type="text" placeholder="Search for a topic..."><br><br>
+                    <input id="topic" name="topic" type="text" placeholder="Search for a topic..." required><br><br>
                     <input type="submit" value="Search">
                 </form>
             </div>
             <div class="result">
-                {% if topic %}
-                <h1>Tweets for "{{ request.view_args['topic'] }}"</h1>
-                <ul>
-                    {% for tweet in tweets %}
-                        <li>
-                            <strong>{{ tweet.username }}</strong>: {{ tweet.tweet }} <br>
-                            <small>{{ tweet.date }}</small>
-                        </li>
-                    {% endfor %}
-                </ul>
+                {% if topic%}
+                    {% if data %}
+                        <h2>Showing results for "{{ topic }}"</h2>
+                        <div class="tweets">
+                            {{ data|safe }}
+                        </div>
+                    {% elif error %}
+                        <div class="error">{{ error }}</div>
+                    {% endif %}
                 {% else %}
-                <p>{{ error }}</p>
-                {%endif%}
+                 <p class="Error">{{error}}</p>
+                {% endif %}
             </div>
         </div>
     </body>

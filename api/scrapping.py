@@ -8,8 +8,10 @@ import os
 import nltk
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet
-nltk.download('wordnet')
+
+# nltk.download("wordnet")
 # from client_config import client
+
 
 class TextPreprocessor:
     def __init__(self):
@@ -127,14 +129,26 @@ class TextPreprocessor:
         return clean, features
 
 
-def config():
-    load_dotenv()
+load_dotenv()
 
 
 USERNAME = os.getenv("USERNAME")
 EMAIL = os.getenv("EMAIL")
 PASSWORD = os.getenv("PASSWORD")
 
+# print(USERNAME)
+# print(EMAIL)
+# print(PASSWORD)
+if not USERNAME or not EMAIL or not PASSWORD:
+    raise ValueError("Ensure USERNAME, EMAIL, and PASSWORD are set in your .env file")
+client = Client("en-US")
+
+async def initialize_client():
+    """Initialise le client Twikit avec la boucle actuelle."""
+    client = Client("en-US")
+    await client.login(auth_info_1=USERNAME, auth_info_2=EMAIL, password=PASSWORD)
+    client.save_cookies("cookies.json")
+    return client
 # client = Client("en-US")
 
 # async def login_agent():
@@ -143,16 +157,17 @@ PASSWORD = os.getenv("PASSWORD")
 #     await login_agent()
 
 
-async def get_tweets_async(topic, client):
-    """Appel entièrement asynchrone pour récupérer les tweets."""
-    tweets = await client.search_tweet(topic, "Latest")
-
-    data = [
-        {"username": tweet.user.name, "tweet": tweet.text, "date": tweet.created_at}
-        for tweet in tweets
-    ]
+async def get_tweets(topic, client):
+    tweets = await client.search_tweet(topic, 'Latest')
+    more_user_tweets = await tweets.next()
+    data = []
+    for tweet in more_user_tweets:
+        data.append(
+            {"username" :tweet.user.name,
+            "tweet": tweet.text,
+            "date": tweet.created_at}
+        )
     df = pd.DataFrame(data)
-    df["date"] = pd.to_datetime(df["date"])
+    df['date'] = pd.to_datetime(df['date'], errors='coerce')
+    df['date'].dropna(inplace=True)
     return df
-
-
