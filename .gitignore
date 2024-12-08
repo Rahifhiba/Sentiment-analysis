@@ -3,3 +3,4 @@ train.csv
 /api/twitter
 /api/test.ipynb
 /api/.env
+/api/cookies.json
