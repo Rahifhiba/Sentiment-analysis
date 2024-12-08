@@ -8,7 +8,7 @@ import os
 import nltk
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet
-
+import re
 # nltk.download("wordnet")
 # from client_config import client
 
@@ -126,7 +126,7 @@ class TextPreprocessor:
         lemmatized_text = self.lemmatize_text(replace_emojie)
         no_repetition = self.reduce_len_text(lemmatized_text)
         clean = self.filter_non_english_words(no_repetition)
-        return clean, features
+        return clean
 
 
 load_dotenv()
@@ -157,17 +157,19 @@ async def initialize_client():
 #     await login_agent()
 
 
-async def get_tweets(topic, client):
+async def get_tweets(topic, client, lang="en", max_tweet=100):
     tweets = await client.search_tweet(topic, 'Latest')
     more_user_tweets = await tweets.next()
     data = []
     for tweet in more_user_tweets:
-        data.append(
-            {"username" :tweet.user.name,
-            "tweet": tweet.text,
-            "date": tweet.created_at}
-        )
+        if tweet.lang == lang:
+            data.append(
+                {"username" :tweet.user.name,
+                "tweet": tweet.text,
+                "date": tweet.created_at}
+            )
     df = pd.DataFrame(data)
     df['date'] = pd.to_datetime(df['date'], errors='coerce')
     df['date'].dropna(inplace=True)
+    df['tweet'].dropna(inplace=True)
     return df

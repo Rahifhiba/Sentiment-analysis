@@ -23,6 +23,8 @@
                 {% if topic%}
                     {% if data %}
                         <h2>Showing results for "{{ topic }}"</h2>
+                        <p class="pos">Positive Tweets: {{ positive_percentage }}%</p>
+                        <p class="neg">Negative Tweets: {{ negative_percentage }}%</p>
                         <div class="tweets">
                             {{ data|safe }}
                         </div>
