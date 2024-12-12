@@ -4,3 +4,6 @@ train.csv
 /api/test.ipynb
 /api/.env
 /api/cookies.json
+/__pycache__
+/api/__pycache__
+test_example.py
