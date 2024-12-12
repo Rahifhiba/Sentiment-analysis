@@ -4,6 +4,7 @@ import joblib
 from scrapping import get_tweets, initialize_client, TextPreprocessor
 from flask.cli import AppGroup
 import pandas as pd
+from twikit import Client
 import asyncio
 
 app = Flask(__name__)
@@ -13,7 +14,9 @@ sentiment_model = joblib.load("model/LR sentiment analysis.joblib")
 pre = TextPreprocessor()
 loop = asyncio.new_event_loop()
 asyncio.set_event_loop(loop)
-client = loop.run_until_complete(initialize_client())
+# client = loop.run_until_complete(initialize_client())
+client = Client()
+client.language = 'en'
 client.load_cookies('cookies.json')
 
 @app.route("/", methods=["GET"])
