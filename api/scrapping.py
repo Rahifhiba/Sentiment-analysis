@@ -152,14 +152,14 @@ async def initialize_client():
 #     return df
 
 
-async def get_tweets(topic, client, lang="en", max_tweet=10000):
-    tweets = await client.search_tweet(topic, "Latest")  # Initiate the search
+async def get_tweets(topic, client, lang="en", max_tweet=500):
+    tweets = await client.search_tweet(topic, "Latest")
     data = []
 
-    while len(data) < max_tweet:  # Continue until we reach the desired count
+    while len(data) < max_tweet:
         try:
-            more_user_tweets = await tweets.next()  # Fetch the next page
-            if not more_user_tweets:  # Break if no more tweets are available
+            more_user_tweets = await tweets.next()
+            if not more_user_tweets:
                 break
 
             for tweet in more_user_tweets:
@@ -171,15 +171,14 @@ async def get_tweets(topic, client, lang="en", max_tweet=10000):
                             "date": tweet.created_at,
                         }
                     )
-                    if len(data) >= max_tweet:  # Stop if we hit the limit
+                    if len(data) >= max_tweet:
                         break
-
-        except Exception as e:  # Handle errors, e.g., rate limits or connection issues
+            await asyncio.sleep(2)
+        except Exception as e:
             print(f"Error fetching tweets: {e}")
             break
 
-    # Convert to DataFrame and clean up
     df = pd.DataFrame(data)
     df["date"] = pd.to_datetime(df["date"], errors="coerce")
-    df = df.dropna(subset=["date", "tweet"])  # Drop rows with missing date or tweet
+    df = df.dropna(subset=["date", "tweet"])
     return df

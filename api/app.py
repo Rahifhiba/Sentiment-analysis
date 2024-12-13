@@ -40,8 +40,10 @@ def analyze_data():
     df["cleaned_tweets"] = df["tweet"].apply(pre.preprocess)
     tfidf_matrix = tfidf_vectorizer.transform(df["cleaned_tweets"])
     df['sentiment'] =  sentiment_model.predict(tfidf_matrix)
-    positive_per = (df["sentiment"] == 1).mean() * 100
-    negative_per = (df["sentiment"] == 0).mean() * 100
+    # change the sentiment to a more user-friendly format
+    df['sentiment'] = df['sentiment'].map({0: 'Negative', 1:'Positive'})
+    positive_per = (df["sentiment"] == 'Positive').mean() * 100
+    negative_per = (df["sentiment"] == 'Negative').mean() * 100
     tweets_html = df.to_html(index=False, classes="tweets-table")
     return render_template(
         "index.html",
