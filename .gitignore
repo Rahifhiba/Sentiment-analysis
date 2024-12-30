@@ -7,3 +7,4 @@ train.csv
 /__pycache__
 /api/__pycache__
 test_example.py
+api/tweets.csv

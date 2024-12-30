@@ -152,7 +152,7 @@ async def initialize_client():
 #     return df
 
 
-async def get_tweets(topic, client, lang="en", max_tweet=500):
+async def get_tweets(topic, client, lang="en", max_tweet=100):
     tweets = await client.search_tweet(topic, "Latest")
     data = []
 
@@ -173,12 +173,11 @@ async def get_tweets(topic, client, lang="en", max_tweet=500):
                     )
                     if len(data) >= max_tweet:
                         break
-            await asyncio.sleep(2)
         except Exception as e:
             print(f"Error fetching tweets: {e}")
             break
 
     df = pd.DataFrame(data)
-    df["date"] = pd.to_datetime(df["date"], errors="coerce")
-    df = df.dropna(subset=["date", "tweet"])
+    # df["date"] = pd.to_datetime(df["date"], errors="coerce")
+    df = df.dropna(subset=["date", "tweet"], axis=0)
     return df

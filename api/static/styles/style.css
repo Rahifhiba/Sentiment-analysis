@@ -49,3 +49,11 @@ th {
     color: white;
     background-color: rgb(126, 146, 163);
   }
+tbody {
+    background-color: rgb(252, 254, 255);
+
+}
+table{
+    border-color: black ;
+    margin: 10px;
+}

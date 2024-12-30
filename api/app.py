@@ -6,7 +6,7 @@ from flask.cli import AppGroup
 import pandas as pd
 from twikit import Client
 import asyncio
-
+import numpy as np
 app = Flask(__name__)
 
 tfidf_vectorizer = joblib.load("model/TF-IDF Vector.pkl")
@@ -40,7 +40,8 @@ def analyze_data():
     df["cleaned_tweets"] = df["tweet"].apply(pre.preprocess)
     tfidf_matrix = tfidf_vectorizer.transform(df["cleaned_tweets"])
     df['sentiment'] =  sentiment_model.predict(tfidf_matrix)
-    # change the sentiment to a more user-friendly format
+    df.replace("NaN", np.nan, inplace=True)
+    df.dropna(subset=["date", "tweet", "cleaned_tweets"], inplace=True)
     df['sentiment'] = df['sentiment'].map({0: 'Negative', 1:'Positive'})
     positive_per = (df["sentiment"] == 'Positive').mean() * 100
     negative_per = (df["sentiment"] == 'Negative').mean() * 100
